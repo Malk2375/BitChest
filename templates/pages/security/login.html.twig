@@ -1,0 +1,53 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello - Login
+{% endblock %}
+
+{% block body %}
+	<style>
+		.example-wrapper {
+			margin: 2em auto;
+			max-width: 800px;
+			width: 95%;
+			font: 18px / 1.5 sans-serif;
+		}
+		.example-wrapper code {
+			background: #F5F5F5;
+			padding: 2px 6px;
+		}
+	</style>
+
+	<div class="example-wrapper">
+		<h1>Hello ✅</h1>
+		<h1 class="mt-4">This is Login page</h1>
+
+		{% if error %}
+			<div class="alert alert-dismissible alert-danger mt-4">
+				{{ error.messageKey|trans(error.messageData, 'security') }}
+			</div>
+		{% endif %}
+
+		{% for message in app.flashes('success') %}
+			<div class="alert alert-success mt-4">
+				{{ message }}
+			</div>
+		{% endfor %}
+
+
+		<form action="{{ path('security.login') }}" method="post">
+			<div class="form-group">
+				<label for="username" class="form-label mt-4">Email address</label>
+				<input type="email" class="form-control" id="username" aria-describedby="emailHelp" placeholder="example@email.com" name="_username" value="{{ last_username }}">
+
+				<small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
+			</div>
+			<div class="form-group">
+				<label for="password" class="form-label mt-4">Password</label>
+				<input type="password" class="form-control" id="password" placeholder="Password" name="_password" autocomplete="off">
+			</div>
+			{# If you want to control the URL the user is redirected to on success
+						<input type="hidden" name="_target_path" value="/account"> #}
+			<button type="submit" class="btn btn-primary mt-4">Submit</button>
+		</form>
+	</div>
+{% endblock %}
