@@ -20,20 +20,30 @@
 
 	<div class="example-wrapper">
 		<div class="jumbotron">
+			{% for message in app.flashes('success') %}
+				<div class="alert alert-success mt-4">
+					{{ message }}
+				</div>
+			{% endfor %}
 			<h1 class="display-4">Hello, Bienvenue sur BitChest App ✅
 			</h1>
 			<hr class="my-4">
-			<p>Rendez-vous sur la page d'inscription pour utiliser l'application
-			</p>
-			<p class="lead">
-				<a class="btn btn-primary btn-lg" href="/register" role="button">Inscrivez Vous
-				</a>
-			</p>
-			<p class="lead">
-				<a class="btn btn-primary btn-lg" href="/login" role="button">Connectez vous
-				</a>
-			</p>
-
+			{% if app.user %}
+				<h2>Bonjour,
+					{{ app.user.fullName }}!</h2>
+			{% endif %}
+			{% if not app.user %}
+				<p>Rendez-vous sur la page d'inscription pour utiliser l'application
+				</p>
+				<p class="lead">
+					<a class="btn btn-primary btn-lg" href="/register" role="button">Inscrivez Vous
+					</a>
+				</p>
+				<p class="lead">
+					<a class="btn btn-primary btn-lg" href="/login" role="button">Connectez vous
+					</a>
+				</p>
+			{% endif %}
 		</div>
 	</div>
 {% endblock %}

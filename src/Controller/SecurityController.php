@@ -14,6 +14,9 @@ use Symfony\Component\HttpFoundation\Request;
 
 class SecurityController extends AbstractController
 {
+    /**
+     * This controller allows you to login on your existing account
+     */
     #[Route('/login', name: 'security.login', methods: ['GET', 'POST'])]
     public function login(AuthenticationUtils $authenticationUtils): Response
     {
@@ -22,11 +25,17 @@ class SecurityController extends AbstractController
             'error' => $authenticationUtils->getLastAuthenticationError(),
         ]);
     }
+    /**
+     * This controller allows you to logout.
+     */
     #[Route('/logout', name: 'security.logout')]
     public function logout()
     {
         // Pas de logique specifique ici car symfony s'occupe de ça
     }
+    /**
+     * This controller allows you to register a new user.
+     */
     #[Route('/register', name: 'security.register', methods: ['GET', 'POST'])]
     public function register(Request $request, EntityManagerInterface $manager): Response
     {
