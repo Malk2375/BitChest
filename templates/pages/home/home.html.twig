@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello HomeController!
+{% block title %}BitChest!
 {% endblock %}
 
 {% block body %}
@@ -20,30 +20,38 @@
 
 	<div class="example-wrapper">
 		<div class="jumbotron">
+			{% if not app.user %}
+				<h1 class="display-4">Hello, Bienvenue sur BitChest App ✅
+				</h1>
+				<hr class="my-4">
+			{% endif %}
 			{% for message in app.flashes('success') %}
 				<div class="alert alert-success mt-4">
 					{{ message }}
 				</div>
 			{% endfor %}
-			<h1 class="display-4">Hello, Bienvenue sur BitChest App ✅
-			</h1>
-			<hr class="my-4">
 			{% if app.user %}
 				<h2>Bonjour,
-					{{ app.user.fullName }}!</h2>
+					{{ app.user.fullName }}
+					✅
+				</h2>
+
 			{% endif %}
 			{% if not app.user %}
-				<p>Rendez-vous sur la page d'inscription pour utiliser l'application
+				<p>Rendez-vous sur la page de connexion pour utiliser l'application
 				</p>
 				<p class="lead">
-					<a class="btn btn-primary btn-lg" href="/register" role="button">Inscrivez Vous
-					</a>
-				</p>
-				<p class="lead">
-					<a class="btn btn-primary btn-lg" href="/login" role="button">Connectez vous
+					<a class="btn btn-primary btn-lg" href="/login" role="button">Se connecter
 					</a>
 				</p>
 			{% endif %}
+			<p class="lead">
+				{% if is_granted('ROLE_ADMIN') %}
+					<p>Create a new User
+					</p>
+					<a class="btn btn-primary btn-lg" href="/register" role="button">Create</a>
+				{% endif %}
+			</p>
 		</div>
 	</div>
 {% endblock %}

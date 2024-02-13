@@ -11,6 +11,7 @@ use App\Entity\User;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class SecurityController extends AbstractController
 {
@@ -37,10 +38,14 @@ class SecurityController extends AbstractController
      * This controller allows you to register a new user.
      */
     #[Route('/register', name: 'security.register', methods: ['GET', 'POST'])]
+    #[IsGranted('ROLE_ADMIN')]
     public function register(Request $request, EntityManagerInterface $manager): Response
     {
+        $randomPassword = bin2hex(random_bytes(5)); // Génère une chaîne hexadécimale de 20 caractères
         $user = new User();
         $user->setRoles(['ROLE_USER']);
+        $user->setPlainPassword($randomPassword);
+        $user->setSolde(500.00);
         $form = $this->createForm(RegistrationType::class, $user);
         $form->handleRequest($request);
 
@@ -48,11 +53,17 @@ class SecurityController extends AbstractController
             $user = $form->getData();
             $this->addFlash(
                 'success',
-                'Votre compte a bien été créé.'
+                sprintf(
+                    "L'utilisateur a été bien créé . Nom complet: %s, Email: %s, Mot de passe Aléatoire: %s, Solde : %s.00 €",
+                    $user->getFullName(),
+                    $user->getEmail(),
+                    $user->getPlainPassword(),
+                    $user->getSolde()
+                )
             );
             $manager->persist($user);
             $manager->flush($user);
-            return $this->redirectToRoute('security.login');
+            return $this->redirectToRoute('app_home');
         }
 
         return $this->render('pages/security/register.html.twig', [

@@ -13,33 +13,44 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasher;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
-
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class UserController extends AbstractController
 {
     /**
-     * This controller allows the user to edit his own profile.
+     * This controller allow us to edit user's profile
+     * Both ROLE_USER and ROLE_ADMIN can edit user's profile because ROLE_ADMIN is a ROLE_USER
+     *
+     * @param User $user
+     * @param Request $request
+     * @param EntityManagerInterface $manager
+     * @return Response
      */
     #[Route('/edit_user/{id}', name: 'user.edit', methods: ['GET', 'POST'])]
-    public function edit(User $user, Request $request, EntityManagerInterface $manager, UserPasswordHasherInterface $hasher): Response
-    {
+    #[IsGranted('ROLE_USER')]
+    public function edit(
+        User $choosenUser,
+        Request $request,
+        EntityManagerInterface $manager,
+        UserPasswordHasherInterface $hasher
+    ): Response {
         /**
          * Pour confirmer que c'est bien cet utilisateur qui voudrait modifier son profil.
-         * La deuxieme condition permet de le redirect vers Son profil; je n'ai pas encore une page profile mais des que je le fais je doit modifier cette route
+         * Si l'utitilisateur n'est pas celui qui voudrait modifier son profil un message d'erreur sera affiché; erreur 403 : on peut la personnaliser depuis https://symfony.com/doc/current/controller/error_pages.html#controller-error-pages-by-status-code
          */
+
         if (!$this->getUser()) {
             return $this->redirectToRoute('security.login');
         }
-        if ($this->getUser() !== $user) {
+        if ($this->getUser() !== $choosenUser) {
             return $this->redirectToRoute('app_home');
         }
 
-
-        $form = $this->createForm(UserType::class, $user);
+        $form = $this->createForm(UserType::class, $choosenUser);
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            if ($hasher->isPasswordValid($user, $form->getData()->getPlainPassword())) {
+            if ($hasher->isPasswordValid($choosenUser, $form->getData()->getPlainPassword())) {
                 $user = $form->getData();
                 $manager->persist($user);
                 $manager->flush();
@@ -58,13 +69,18 @@ class UserController extends AbstractController
         }
 
         return $this->render('pages/user/edit.html.twig', [
-            'user' => $user,
+            'user' => $choosenUser,
             'form' => $form->createView(),
         ]);
     }
     #[Route('/edit_password/{id}', name: 'user.edit.password', methods: ['GET', 'POST'])]
-    public function editPassword(Request $request, User $user,  EntityManagerInterface $manager, UserPasswordHasherInterface $hasher): Response
-    {
+    #[IsGranted('ROLE_USER')]
+    public function editPassword(
+        User $user,
+        Request $request,
+        EntityManagerInterface $manager,
+        UserPasswordHasherInterface $hasher
+    ): Response {
         if (!$this->getUser()) {
             return $this->redirectToRoute('security.login');
         }
