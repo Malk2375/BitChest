@@ -16,7 +16,9 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 class SecurityController extends AbstractController
 {
     /**
-     * This controller allows you to login on your existing account
+     * This function allows you to login on your existing account
+     * @param AuthenticationUtils $authenticationUtils
+     * @return Response
      */
     #[Route('/login', name: 'security.login', methods: ['GET', 'POST'])]
     public function login(AuthenticationUtils $authenticationUtils): Response
@@ -27,7 +29,9 @@ class SecurityController extends AbstractController
         ]);
     }
     /**
-     * This controller allows you to logout.
+     *  This function allows you to logout.
+     *
+     * @return void
      */
     #[Route('/logout', name: 'security.logout')]
     public function logout()
@@ -35,7 +39,11 @@ class SecurityController extends AbstractController
         // Pas de logique specifique ici car symfony s'occupe de ça
     }
     /**
-     * This controller allows you to register a new user.
+     * This function allows the admin only to register a new user.
+     *
+     * @param Request $request
+     * @param EntityManagerInterface $manager
+     * @return Response
      */
     #[Route('/register', name: 'security.register', methods: ['GET', 'POST'])]
     #[IsGranted('ROLE_ADMIN')]
@@ -51,16 +59,11 @@ class SecurityController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $user = $form->getData();
-            $this->addFlash(
-                'success',
-                sprintf(
-                    "L'utilisateur a été bien créé . Nom complet: %s, Email: %s, Mot de passe Aléatoire: %s, Solde : %s.00 €",
-                    $user->getFullName(),
-                    $user->getEmail(),
-                    $user->getPlainPassword(),
-                    $user->getSolde()
-                )
-            );
+            $message = "Nom complet: " . $user->getFullName() . "\n";
+            $message .= "Email: " . $user->getEmail() . "\n";
+            $message .= "Mot de passe Aléatoire: " . $user->getPlainPassword() . "\n";
+            $message .= "Solde: " . $user->getSolde() . ".00 €";
+            $this->addFlash('success', $message);
             $manager->persist($user);
             $manager->flush($user);
             return $this->redirectToRoute('app_home');

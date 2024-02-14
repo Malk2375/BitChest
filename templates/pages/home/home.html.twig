@@ -25,18 +25,24 @@
 				</h1>
 				<hr class="my-4">
 			{% endif %}
-			{% for message in app.flashes('success') %}
-				<div class="alert alert-success mt-4">
-					{{ message }}
-				</div>
-			{% endfor %}
 			{% if app.user %}
-				<h2>Bonjour,
+				<h2>
+					{% if is_granted('ROLE_ADMIN') %}
+						Admin
+					{% endif %}
 					{{ app.user.fullName }}
 					✅
 				</h2>
-
 			{% endif %}
+			{% for message in app.flashes('success') %}
+				<div class="card border-success mb-3" style="max-width: 23rem;">
+					<div class="card-header">User Created</div>
+					<div class="card-body">
+						<h4 class="card-title">Informations</h4>
+						<p class="card-text">{{ message }}</p>
+					</div>
+				</div>
+			{% endfor %}
 			{% if not app.user %}
 				<p>Rendez-vous sur la page de connexion pour utiliser l'application
 				</p>

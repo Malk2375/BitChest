@@ -8,12 +8,16 @@ use Symfony\Component\Routing\Annotation\Route;
 use App\Entity\User;
 use App\Form\UserType;
 use App\Form\UserPasswordType;
+use App\Repository\UserRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasher;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Component\ExpressionLanguage\Expression;
+use Knp\Component\Pager\PaginatorInterface;
+
 
 class UserController extends AbstractController
 {
@@ -27,7 +31,7 @@ class UserController extends AbstractController
      * @return Response
      */
     #[Route('/edit_user/{id}', name: 'user.edit', methods: ['GET', 'POST'])]
-    #[IsGranted('ROLE_USER')]
+    #[IsGranted(new Expression('is_granted("ROLE_ADMIN") or is_granted("ROLE_USER")'))]
     public function edit(
         User $choosenUser,
         Request $request,
@@ -74,7 +78,7 @@ class UserController extends AbstractController
         ]);
     }
     #[Route('/edit_password/{id}', name: 'user.edit.password', methods: ['GET', 'POST'])]
-    #[IsGranted('ROLE_USER')]
+    #[IsGranted(new Expression('is_granted("ROLE_ADMIN") or is_granted("ROLE_USER")'))]
     public function editPassword(
         User $user,
         Request $request,
@@ -115,6 +119,31 @@ class UserController extends AbstractController
         return $this->render('pages/user/edit_password.html.twig', [
             'user' => $user,
             'form' => $form->createView()
+        ]);
+    }
+    /**
+     * This function displays all the users profile's
+     *
+     * @param UserRepository $repository
+     * @param PaginatorInterface $paginator
+     * @param Request $request
+     * @return Response
+     */
+    #[Route('/usersdisplay', name: 'users.display', methods: ['GET', 'POST'])]
+    #[IsGranted('ROLE_ADMIN')]
+    public function usersDisplay(
+        UserRepository $repository,
+        PaginatorInterface $paginator,
+        Request $request
+    ): Response {
+        $users = $paginator->paginate(
+            $repository->findAll(),
+            $request->query->getInt('page', 1),
+            10
+        );
+        // dd($users);
+        return $this->render('pages/admin/usersDisplay.html.twig', [
+            'users' => $users,
         ]);
     }
 }

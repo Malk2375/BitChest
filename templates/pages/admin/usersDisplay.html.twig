@@ -1,0 +1,66 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Users
+{% endblock %}
+
+{% block body %}
+
+	<style>
+		.example-wrapper {
+			margin: 1em auto;
+			width: 90%;
+			font: 18px / 1.5 sans-serif;
+		}
+		.example-wrapper code {
+			background: #F5F5F5;
+			padding: 2px 6px;
+		}
+		.center-text {
+			text-align: center;
+		}
+		.navigation {
+			padding-left: 30%;
+		}
+	</style>
+
+	<div class="example-wrapper">
+		<div class="jumbotron mt-4">
+			<div class="center-text">
+				<h2>ADMIN
+					{{ app.user.fullName }}
+					✅</h2>
+				<p class="lead entete">Voici la liste de tous les utilisateurs de BitChest</p>
+			</div>
+			<p class="count">
+				Number of Users of BitChest
+				{{ users.getTotalItemCount }}
+			</p>
+			<table class="table table-hover">
+				<thead>
+					<tr>
+						<th scope="col">ID user</th>
+						<th scope="col">Full Name</th>
+						<th scope="col">Email</th>
+						<th scope="col">Solde</th>
+					</tr>
+				</thead>
+				<tbody>
+					{% for user in users %}
+						<tr>
+							{# <th scope="row">Default</th> #}
+							<td>{{ user.id }}</td>
+							<td>{{ user.fullName }}</td>
+							<td>{{ user.email }}</td>
+							<td>{{ user.solde }}
+								€</td>
+						</tr>
+					{% endfor %}
+				</tbody>
+			</table>
+			<div class="navigation" style="margin: 0 auto;">
+
+				{{ knp_pagination_render(users) }}
+			</div>
+		</div>
+	</div>
+{% endblock %}

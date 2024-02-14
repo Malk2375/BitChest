@@ -32,6 +32,14 @@ class AppFixtures extends Fixture
                 ->setPlainPassword('password');
             $manager->persist($user);
         }
+        for ($i = 0; $i < 1; $i++) {
+            $user = new User();
+            $user->setFullName($this->faker->name())
+                ->setRoles(['ROLE_ADMIN'])
+                ->setEmail($this->faker->email())
+                ->setPlainPassword('adminpassword');
+            $manager->persist($user);
+        }
 
         $manager->flush();
     }
