@@ -34,15 +34,49 @@
 					✅
 				</h2>
 			{% endif %}
-			{% for message in app.flashes('success') %}
-				<div class="card border-success mb-3" style="max-width: 23rem;">
+
+			{% for message in app.flashes('name') %}
+				<div class="card border-success mb-3" style="max-width: 26rem;">
 					<div class="card-header">User Created</div>
 					<div class="card-body">
-						<h4 class="card-title">Informations</h4>
 						<p class="card-text">{{ message }}</p>
 					</div>
 				</div>
 			{% endfor %}
+			{% for message in app.flashes('email') %}
+				<div class="card border-success mb-3" style="max-width: 26rem;">
+					<div class="card-body">
+						<p class="card-text">{{ message }}</p>
+					</div>
+				</div>
+			{% endfor %}
+			{% for message in app.flashes('password') %}
+				<div class="card border-success mb-3" style="max-width: 26rem;">
+					<div class="card-body">
+						<p class="card-text">{{ message }}</p>
+					</div>
+				</div>
+			{% endfor %}
+			{% for message in app.flashes('solde') %}
+				<div class="card border-success mb-3" style="max-width: 26rem;">
+					<div class="card-body">
+						<p class="card-text">{{ message }}</p>
+					</div>
+				</div>
+			{% endfor %}
+			{% for message in app.flashes('updateProfilSuccess') %}
+				<div class="alert alert-dismissible alert-success">
+					<strong>{{message}}</strong>
+				</div>
+			{% endfor %}
+
+			{% for message in app.flashes('updatePasswordSuccess') %}
+				<div class="alert alert-dismissible alert-success">
+					<strong>{{message}}</strong>
+				</div>
+			{% endfor %}
+
+
 			{% if not app.user %}
 				<p>Rendez-vous sur la page de connexion pour utiliser l'application
 				</p>
@@ -53,9 +87,10 @@
 			{% endif %}
 			<p class="lead">
 				{% if is_granted('ROLE_ADMIN') %}
-					<p>Create a new User
-					</p>
-					<a class="btn btn-primary btn-lg" href="/register" role="button">Create</a>
+					<p>Create a new User</p>
+					<a class="btn btn-primary btn-lg" href="{{ path('security.register') }}" role="button">Create</a>
+					<p class="mt-4">List of the Users of BitChest</p>
+					<a class="btn btn-primary btn-lg" href="{{ path('users.display') }}" role="button">Show</a>
 				{% endif %}
 			</p>
 		</div>

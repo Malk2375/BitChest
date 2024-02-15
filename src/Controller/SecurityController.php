@@ -59,11 +59,34 @@ class SecurityController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $user = $form->getData();
-            $message = "Nom complet: " . $user->getFullName() . "\n";
-            $message .= "Email: " . $user->getEmail() . "\n";
-            $message .= "Mot de passe Aléatoire: " . $user->getPlainPassword() . "\n";
-            $message .= "Solde: " . $user->getSolde() . ".00 €";
-            $this->addFlash('success', $message);
+            $this->addFlash(
+                'name',
+                sprintf(
+                    "Nom complet: %s",
+                    $user->getFullName(),
+                )
+            );
+            $this->addFlash(
+                'email',
+                sprintf(
+                    "Email: %s",
+                    $user->getEmail(),
+                )
+            );
+            $this->addFlash(
+                'password',
+                sprintf(
+                    "Random password: %s",
+                    $user->getPlainPassword(),
+                )
+            );
+            $this->addFlash(
+                'solde',
+                sprintf(
+                    "Son Solde est de: %s.00 €",
+                    $user->getSolde()
+                )
+            );
             $manager->persist($user);
             $manager->flush($user);
             return $this->redirectToRoute('app_home');

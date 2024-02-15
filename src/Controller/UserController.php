@@ -33,7 +33,7 @@ class UserController extends AbstractController
     #[Route('/edit_user/{id}', name: 'user.edit', methods: ['GET', 'POST'])]
     #[IsGranted(new Expression('is_granted("ROLE_ADMIN") or is_granted("ROLE_USER")'))]
     public function edit(
-        User $choosenUser,
+        User $user,
         Request $request,
         EntityManagerInterface $manager,
         UserPasswordHasherInterface $hasher
@@ -46,22 +46,27 @@ class UserController extends AbstractController
         if (!$this->getUser()) {
             return $this->redirectToRoute('security.login');
         }
-        if ($this->getUser() !== $choosenUser) {
+        if ($this->getUser() === $user) {
+            // L'utilisateur actuel est l'utilisateur spécifié
+        } elseif (in_array('ROLE_ADMIN', $this->getUser()->getRoles(), true)) {
+            // L'utilisateur actuel a le rôle ROLE_ADMIN
+        } else {
+            // Redirection pour tous les autres cas
             return $this->redirectToRoute('app_home');
         }
 
-        $form = $this->createForm(UserType::class, $choosenUser);
+        $form = $this->createForm(UserType::class, $user);
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            if ($hasher->isPasswordValid($choosenUser, $form->getData()->getPlainPassword())) {
+            if ($hasher->isPasswordValid($user, $form->getData()->getPlainPassword())) {
                 $user = $form->getData();
                 $manager->persist($user);
                 $manager->flush();
 
                 $this->addFlash(
-                    'success',
-                    'Your profil has been updated.'
+                    'updateProfilSuccess',
+                    'Profil updated successfully.'
                 );
                 return $this->redirectToRoute('app_home');
             } else {
@@ -73,12 +78,12 @@ class UserController extends AbstractController
         }
 
         return $this->render('pages/user/edit.html.twig', [
-            'user' => $choosenUser,
+            'user' => $user,
             'form' => $form->createView(),
         ]);
     }
     #[Route('/edit_password/{id}', name: 'user.edit.password', methods: ['GET', 'POST'])]
-    #[IsGranted(new Expression('is_granted("ROLE_ADMIN") or is_granted("ROLE_USER")'))]
+    #[IsGranted(new Expression('is_granted("ROLE_ADMIN")' or '(is_granted("ROLE_USER")'))]
     public function editPassword(
         User $user,
         Request $request,
@@ -88,9 +93,15 @@ class UserController extends AbstractController
         if (!$this->getUser()) {
             return $this->redirectToRoute('security.login');
         }
-        if ($this->getUser() !== $user) {
+        if ($this->getUser() === $user) {
+            // L'utilisateur actuel est l'utilisateur spécifié
+        } elseif (in_array('ROLE_ADMIN', $this->getUser()->getRoles(), true)) {
+            // L'utilisateur actuel a le rôle ROLE_ADMIN
+        } else {
+            // Redirection pour tous les autres cas
             return $this->redirectToRoute('app_home');
         }
+
         $form = $this->createForm(UserPasswordType::class);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
@@ -105,7 +116,7 @@ class UserController extends AbstractController
                 $manager->persist($user);
                 $manager->flush();
                 $this->addFlash(
-                    'success',
+                    'updatePasswordSuccess',
                     'Your password has been updated.'
                 );
                 return $this->redirectToRoute('app_home');
@@ -145,5 +156,31 @@ class UserController extends AbstractController
         return $this->render('pages/admin/usersDisplay.html.twig', [
             'users' => $users,
         ]);
+    }
+    #[Route('/delete_user/{id}', name: 'user.delete', methods: ['GET', 'POST'])]
+    public function delete_user(
+        User $user,
+        Request $request,
+        EntityManagerInterface $manager
+    ) {
+        if (!$this->getUser()) {
+            return $this->redirectToRoute('security.login');
+        }
+        if ($this->getUser() === $user) {
+            // L'utilisateur actuel est l'utilisateur spécifié
+        } elseif (in_array('ROLE_ADMIN', $this->getUser()->getRoles(), true)) {
+            // L'utilisateur actuel a le rôle ROLE_ADMIN
+        } else {
+            // Redirection pour tous les autres cas
+            return $this->redirectToRoute('app_home');
+        }
+
+        $manager->remove($user);
+        $manager->flush();
+        $this->addFlash(
+            'deleteUserSuccess',
+            'Profil deleted successfully.'
+        );
+        return $this->redirectToRoute('users.display');
     }
 }

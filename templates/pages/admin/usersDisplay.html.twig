@@ -18,8 +18,30 @@
 		.center-text {
 			text-align: center;
 		}
-		.navigation {
-			padding-left: 30%;
+		.count {
+			display: flex;
+			flex-direction: row;
+			align-items: center;
+			justify-content: space-around;
+			width: 95%;
+		}
+		.count a {
+			font-size: 16px;
+			width: 150px;
+		}
+		.jumbotron {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+		}
+
+		.table th {
+			vertical-align: middle;
+			text-align: center;
+		}
+		.table td {
+			vertical-align: middle;
+			text-align: center;
 		}
 	</style>
 
@@ -31,17 +53,28 @@
 					✅</h2>
 				<p class="lead entete">Voici la liste de tous les utilisateurs de BitChest</p>
 			</div>
-			<p class="count">
-				Number of Users of BitChest
-				{{ users.getTotalItemCount }}
-			</p>
-			<table class="table table-hover">
+			<div class="count">
+				<div>
+					Number of Users of BitChest :
+					<strong>{{ users.getTotalItemCount }}</strong>
+				</div>
+				<a class="btn btn-primary btn-lg" href="/register" role="button">Create User</a>
+			</div>
+			{% for message in app.flashes('deleteUserSuccess') %}
+				<div class="alert alert-dismissible alert-success">
+					<strong>{{message}}</strong>
+				</div>
+			{% endfor %}
+			<table class="table table-hover mt-4">
 				<thead>
 					<tr>
 						<th scope="col">ID user</th>
 						<th scope="col">Full Name</th>
 						<th scope="col">Email</th>
 						<th scope="col">Solde</th>
+						<th scope="col">Edit Profil</th>
+						<th scope="col">Edit Passwords</th>
+						<th scope="col">Delete</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -53,12 +86,22 @@
 							<td>{{ user.email }}</td>
 							<td>{{ user.solde }}
 								€</td>
+							<td>
+								<a class="btn btn-info" href="{{ path('user.edit', { 'id': user.id }) }}">Edit</a>
+							</td>
+							<td>
+								{# Ajout de la colonne Action contenant le bouton "Modifier" #}
+								<a class="btn btn-info" href="{{ path('user.edit.password', { 'id': user.id }) }}">Edit</a>
+							</td>
+							<td>
+								{# Ajout de la colonne Action contenant le bouton "Modifier" #}
+								<a class="btn btn-warning" href="{{ path('user.delete', { 'id': user.id }) }}">Delete</a>
+							</td>
 						</tr>
 					{% endfor %}
 				</tbody>
 			</table>
 			<div class="navigation" style="margin: 0 auto;">
-
 				{{ knp_pagination_render(users) }}
 			</div>
 		</div>
