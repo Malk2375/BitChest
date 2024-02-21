@@ -11,6 +11,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
+use Symfony\Component\Form\Extension\Core\Type\EmailType;
 
 class UserType extends AbstractType
 {
@@ -25,6 +26,22 @@ class UserType extends AbstractType
                     'class' => 'form-control',
                     'minlength' => '2',
                     'maxlength' => '100',
+                ]
+            ])
+            ->add('email', EmailType::class, [
+                'attr' => [
+                    'class' => 'form-control',
+                    'minlength' => '2',
+                    'maxlength' => '180',
+                ],
+                'label' => 'Email Adress',
+                'label_attr' => [
+                    'class' => 'form-label mt-4',
+                ],
+                'constraints' => [
+                    new Assert\NotBlank(),
+                    new Assert\Email(message: 'The email {{ value }} is not a valid email.'),
+                    new Assert\Length(['min' => 2, 'max' => 180]),
                 ]
             ])
             ->add('plainPassword', PasswordType::class, [

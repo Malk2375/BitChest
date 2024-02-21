@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Repository\UserRepository;
 use Doctrine\ORM\Mapping as ORM;
+use App\Entity\Wallet;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
@@ -60,12 +61,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $updatedAt = null;
 
-    #[ORM\Column]
-    private ?float $solde = null;
+    #[ORM\OneToOne(cascade: ['persist', 'remove'], targetEntity: Wallet::class, mappedBy: 'user')]
+    private $wallet;
 
     public function __construct()
     {
         $this->updatedAt = new \DateTimeImmutable;
+        // if (!in_array('ROLE_ADMIN', $this->roles)) {
+        //     $this->wallet = new Wallet();
+        //     $this->wallet->setUser($this); // Assurez-vous de lier l'utilisateur au portefeuille
+        // }
     }
 
     public function getId(): ?int
@@ -175,14 +180,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getSolde(): ?float
+    public function getWallet(): ?Wallet
     {
-        return $this->solde;
+        return $this->wallet;
     }
 
-    public function setSolde(float $solde): static
+    public function setWallet(Wallet $wallet): self
     {
-        $this->solde = $solde;
+        $this->wallet = $wallet;
 
         return $this;
     }

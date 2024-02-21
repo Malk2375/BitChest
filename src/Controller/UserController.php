@@ -132,6 +132,26 @@ class UserController extends AbstractController
             'form' => $form->createView()
         ]);
     }
+    #[Route('/profil/{id}', name: 'user.profil', methods: ['GET', 'POST'])]
+    #[IsGranted(new Expression('is_granted("ROLE_ADMIN")' or '(is_granted("ROLE_USER")'))]
+    public function profil(
+        User $user,
+    ) {
+        if (!$this->getUser()) {
+            return $this->redirectToRoute('security.login');
+        }
+        if ($this->getUser() === $user) {
+            // L'utilisateur actuel est l'utilisateur spécifié
+        } elseif (in_array('ROLE_ADMIN', $this->getUser()->getRoles(), true)) {
+            // L'utilisateur actuel a le rôle ROLE_ADMIN
+        } else {
+            // Redirection pour tous les autres cas
+            return $this->redirectToRoute('app_home');
+        }
+        return $this->render('pages/user/profil.html.twig', [
+            'user' => $user,
+        ]);
+    }
     /**
      * This function displays all the users profile's
      *

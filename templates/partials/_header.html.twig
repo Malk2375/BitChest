@@ -20,8 +20,6 @@ dropdownMenu.classList.toggle("show");
 <nav class="navbar navbar-expand-lg bg-light" data-bs-theme="light">
 	<div class="container-fluid">
 		<a class="navbar-brand" href="{{ path('app_home') }}"><img src="{{ asset('images/assets/bitchest_logo.png') }}" style="width: 105px;" alt="Logo"></a>
-
-
 		{# <a class="navbar-brand" href="#">BitChest App</a> #}
 		<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarColor03" aria-controls="navbarColor03" aria-expanded="false" aria-label="Toggle navigation">
 			<span class="navbar-toggler-icon"></span>
@@ -30,38 +28,62 @@ dropdownMenu.classList.toggle("show");
 			<ul
 				class="navbar-nav me-auto">
 				{# <li class="nav-item">
-											<a class="nav-link active" href="/">Home
-												<span class="visually-hidden">(current)</span>
-											</a>
-										</li> #}
-				<li class="nav-item">
-					<a class="nav-link active" href="{{ path('app_wallet') }}">Wallet
-						<span class="visually-hidden">(current)</span>
-					</a>
-				</li>
+																	<a class="nav-link active" href="/">Home
+																		<span class="visually-hidden">(current)</span>
+																	</a>
+																</li> #}
+				{% if app.user %}
+					{% if is_granted('ROLE_ADMIN') %}
+						{# Si l'utilisateur a le rôle ADMIN, n'affichez pas le bouton #}
+						{# Vous pouvez également ajouter d'autres conditions ici si nécessaire #}
+					{% else %}
+						<li class="nav-item">
+							<a class="nav-link active" href="{{ path('app_wallet') }}">Wallet
+								<span class="visually-hidden">(current)</span>
+							</a>
+						</li>
+					{% endif %}
+				{% endif %}
 
 				{% if app.user %}
 					<li class="nav-item dropdown">
 						<a id="dropdownToggle" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><img src="{{ asset('images/man.png') }}" style="width: 25px;" alt="Dropdown"></a>
 						<div class="dropdown-menu" data-popper-placement="bottom-start">
-							<h6 class="dropdown-header">{{app.user.fullName}}</h6>
+							<h6 class="dropdown-header">
+								<a href="{{path('user.profil', {'id': app.user.id})}}">{{app.user.fullName}}</a>
+							</h6>
 							<a class="dropdown-item" href="{{ path('user.edit', {'id': app.user.id}) }}">EDIT PROFIL</a>
 							<a class="dropdown-item" href="{{ path('user.edit.password', {'id': app.user.id}) }}">EDIT PASSWORD</a>
 							{% if is_granted('ROLE_ADMIN') %}
 								<a class="dropdown-item" href="{{ path('users.display') }}">Users Settings</a>
 							{% endif %}
-							<a class="dropdown-item" href="{{ path('app_wallet') }}">My Wallet</a>
+
+							{% if is_granted('ROLE_ADMIN') %}
+								{# Si l'utilisateur a le rôle ADMIN, n'affichez pas le bouton #}
+								{# Vous pouvez également ajouter d'autres conditions ici si nécessaire #}
+							{% else %}
+								<a class="dropdown-item" href="{{ path('app_wallet') }}">My Wallet</a>
+							{% endif %}
+
 							<div class="dropdown-divider"></div>
 							<a class="dropdown-item" href={{ path('security.logout') }}>LOGOUT</a>
 						</div>
 					</li>
-					<span class="badge bg-info d-flex nav-item" style="font-size:20px">
-						SOLDE :
-						{{app.user.solde}}
-						€</span>
 				{% endif %}
-
-			</ul>
+			</div>
+			{% if app.user %}
+				{% if is_granted('ROLE_ADMIN') %}
+					{# Si l'utilisateur a le rôle ADMIN, n'affichez pas le bouton #}
+					{# Vous pouvez également ajouter d'autres conditions ici si nécessaire #}
+				{% else %}
+					<ul class="navbar-nav me-auto">
+						<li class="nav-item">
+							<a type="button" class="btn btn-info" href="{{ path('app_wallet') }}">Solde :
+								{{ app.user.wallet.solde }}
+								€</a>
+						</li>
+					</ul>
+				{% endif %}
+			{% endif %}
 		</div>
-	</div>
-</nav>
+	</nav>

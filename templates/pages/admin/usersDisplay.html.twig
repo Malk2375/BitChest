@@ -84,8 +84,13 @@
 							<td>{{ user.id }}</td>
 							<td>{{ user.fullName }}</td>
 							<td>{{ user.email }}</td>
-							<td>{{ user.solde }}
-								€</td>
+							<td>
+								{% if user.wallet is not null %}
+									{{ user.wallet.solde }}
+								{% else %}
+									ADMIN ⭐
+								{% endif %}
+							</td>
 							<td>
 								<a class="btn btn-info" href="{{ path('user.edit', { 'id': user.id }) }}">Edit</a>
 							</td>

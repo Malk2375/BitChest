@@ -57,13 +57,6 @@
 					</div>
 				</div>
 			{% endfor %}
-			{% for message in app.flashes('solde') %}
-				<div class="card border-success mb-3" style="max-width: 26rem;">
-					<div class="card-body">
-						<p class="card-text">{{ message }}</p>
-					</div>
-				</div>
-			{% endfor %}
 			{% for message in app.flashes('updateProfilSuccess') %}
 				<div class="alert alert-dismissible alert-success">
 					<strong>{{message}}</strong>

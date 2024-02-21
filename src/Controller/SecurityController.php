@@ -12,6 +12,7 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use App\Entity\Wallet;
 
 class SecurityController extends AbstractController
 {
@@ -53,7 +54,11 @@ class SecurityController extends AbstractController
         $user = new User();
         $user->setRoles(['ROLE_USER']);
         $user->setPlainPassword($randomPassword);
-        $user->setSolde(500.00);
+        // Créez une nouvelle instance de Wallet et définissez son solde sur 500
+        $wallet = new Wallet();
+        $wallet->setSolde(500);
+        // Associez le portefeuille à l'utilisateur
+        $wallet->setUser($user);
         $form = $this->createForm(RegistrationType::class, $user);
         $form->handleRequest($request);
 
@@ -80,14 +85,8 @@ class SecurityController extends AbstractController
                     $user->getPlainPassword(),
                 )
             );
-            $this->addFlash(
-                'solde',
-                sprintf(
-                    "Son Solde est de: %s.00 €",
-                    $user->getSolde()
-                )
-            );
             $manager->persist($user);
+            $manager->persist($wallet);
             $manager->flush($user);
             return $this->redirectToRoute('app_home');
         }
