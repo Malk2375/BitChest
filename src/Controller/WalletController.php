@@ -15,8 +15,6 @@ class WalletController extends AbstractController
     #[IsGranted('ROLE_USER')]
     public function index(): Response
     {
-        return $this->render('wallet/index.html.twig', [
-            'controller_name' => 'WalletController',
-        ]);
+        return $this->render('wallet/index.html.twig');
     }
 }

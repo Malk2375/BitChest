@@ -62,6 +62,12 @@
 					<strong>{{message}}</strong>
 				</div>
 			{% endfor %}
+			{% for message in app.flashes('buysuccess') %}
+				<div class="alert alert-dismissible alert-success">
+					<strong>{{message}}</strong>
+				</div>
+			{% endfor %}
+
 
 			{% for message in app.flashes('updatePasswordSuccess') %}
 				<div class="alert alert-dismissible alert-success">

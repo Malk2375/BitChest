@@ -19,7 +19,7 @@ class Wallet
 
     #[ORM\OneToOne(cascade: ['persist', 'remove'], targetEntity: User::class, inversedBy: "wallet")]
     #[ORM\JoinColumn(name: "user_id", referencedColumnName: "id")]
-    private $user;
+    private ?User $user;
 
     public function getId(): ?int
     {

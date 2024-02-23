@@ -10,7 +10,7 @@
 			display: flex;
 			align-items: center;
 			justify-content: space-between;
-			width: 250px;
+			width: 400px;
 		}
 	</style>
 	<script>
@@ -34,10 +34,10 @@ dropdownMenu.classList.toggle("show");
 				<ul
 					class="navbar-nav me-auto">
 					{# <li class="nav-item">
-																																																																<a class="nav-link active" href="/">Home
-																																																																	<span class="visually-hidden">(current)</span>
-																																																																</a>
-																																																															</li> #}
+																<a class="nav-link active" href="/">Home
+																	<span class="visually-hidden">(current)</span>
+																</a>
+															</li> #}
 					{% if app.user %}
 						{% if is_granted('ROLE_ADMIN') %}
 							{# Si l'utilisateur a le rôle ADMIN, n'affichez pas le bouton #}
@@ -91,15 +91,20 @@ dropdownMenu.classList.toggle("show");
 							{# Vous pouvez également ajouter d'autres conditions ici si nécessaire #}
 						{% else %}
 							<ul class="navbar-nav me-auto ">
-								<li class="nav-item "></li>
-								<a type="button" class="btn btn-info " href="{{ path('app_wallet') }}">Solde :
-									{{ app.user.wallet.solde }}
-									€</a>
-							</li>
-						</ul>
-					</div>
+								<li class="nav-item ">
+									<a type="button" class="btn btn-info " href="{{ path('app_wallet') }}">Solde :
+										{{ app.user.wallet.solde }}
+										€</a>
+								</li>
+							</ul>
+							<ul>
+								<li class="nav-item ">
+									<a type="button" class="btn btn-info " href="{{ path('crypto_buy') }}">Buy Crypto</a>
+								</li>
+							</ul>
+						</div>
+					{% endif %}
 				{% endif %}
-			{% endif %}
-		</div>
-	</nav>
-{% endblock %}
+			</div>
+		</nav>
+	{% endblock %}

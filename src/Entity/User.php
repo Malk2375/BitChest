@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use App\Entity\Wallet;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
@@ -61,8 +63,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $updatedAt = null;
 
-    #[ORM\OneToOne(cascade: ['persist', 'remove'], targetEntity: Wallet::class, mappedBy: 'user')]
-    private $wallet;
+    #[ORM\OneToOne(targetEntity: Wallet::class, mappedBy: 'user', cascade: ['persist', 'remove'])]
+    public $wallet;
+
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: Transaction::class)]
+    private Collection $transactions;
 
     public function __construct()
     {
@@ -71,6 +76,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         //     $this->wallet = new Wallet();
         //     $this->wallet->setUser($this); // Assurez-vous de lier l'utilisateur au portefeuille
         // }
+        $this->transactions = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -188,6 +194,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setWallet(Wallet $wallet): self
     {
         $this->wallet = $wallet;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Transaction>
+     */
+    public function getTransactions(): Collection
+    {
+        return $this->transactions;
+    }
+
+    public function addTransaction(Transaction $transaction): static
+    {
+        if (!$this->transactions->contains($transaction)) {
+            $this->transactions->add($transaction);
+            $transaction->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeTransaction(Transaction $transaction): static
+    {
+        if ($this->transactions->removeElement($transaction)) {
+            // set the owning side to null (unless already changed)
+            if ($transaction->getUser() === $this) {
+                $transaction->setUser(null);
+            }
+        }
 
         return $this;
     }

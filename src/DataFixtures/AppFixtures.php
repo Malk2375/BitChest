@@ -73,7 +73,6 @@ class AppFixtures extends Fixture
     }
 
 
-    // Function to get the first quotation using the provided function
     private function getFirstCotation($cryptoname)
     {
         return ord(substr($cryptoname, 0, 1)) + rand(0, 10);
