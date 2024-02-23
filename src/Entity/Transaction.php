@@ -30,6 +30,9 @@ class Transaction
     #[ORM\JoinColumn(nullable: false)]
     private ?CryptoCurrency $crypto = null;
 
+    #[ORM\Column(length: 255)]
+    private ?string $type = null;
+
     public function __construct()
     {
         $this->transactionDate = new \DateTimeImmutable;
@@ -96,6 +99,18 @@ class Transaction
     public function setCrypto(?CryptoCurrency $crypto): static
     {
         $this->crypto = $crypto;
+
+        return $this;
+    }
+
+    public function getType(): ?string
+    {
+        return $this->type;
+    }
+
+    public function setType(string $type): static
+    {
+        $this->type = $type;
 
         return $this;
     }
