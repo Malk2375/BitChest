@@ -21,6 +21,9 @@ class Wallet
     #[ORM\JoinColumn(name: "user_id", referencedColumnName: "id")]
     private ?User $user;
 
+    #[ORM\Column(nullable: true)]
+    private ?array $userCryptoAmounts = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -46,6 +49,18 @@ class Wallet
     public function setUser(User $user): self
     {
         $this->user = $user;
+
+        return $this;
+    }
+
+    public function getUserCryptoAmounts(): ?array
+    {
+        return $this->userCryptoAmounts;
+    }
+
+    public function setUserCryptoAmounts(?array $userCryptoAmounts): static
+    {
+        $this->userCryptoAmounts = $userCryptoAmounts;
 
         return $this;
     }

@@ -7,6 +7,8 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use App\Entity\User;
+use App\Entity\Wallet;
 
 
 class WalletController extends AbstractController
@@ -15,6 +17,10 @@ class WalletController extends AbstractController
     #[IsGranted('ROLE_USER')]
     public function index(): Response
     {
-        return $this->render('wallet/index.html.twig');
+        $user = $this->getUser();
+        $userCryptoAmounts = $user->wallet?->getUserCryptoAmounts();
+        return $this->render('wallet/index.html.twig', [
+            'userCryptoAmounts' => $userCryptoAmounts,
+        ]);
     }
 }

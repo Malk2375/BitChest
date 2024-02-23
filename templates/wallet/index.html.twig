@@ -37,6 +37,19 @@
 							{{app.user.wallet.solde}}
 							€</p>
 					</div>
+					{% if userCryptoAmounts is not null %}
+						<div class="card-body">
+							<h4 class="card-title">Crypto</h4>
+							{% for cryptoName, amount in userCryptoAmounts %}
+								<p class="card-text">{{ cryptoName }}:
+									{{ amount }}
+								</p>
+							{% endfor %}
+						{% else %}
+							<h4 class="card-title">Crypto</h4>
+							<p class="card-text">User has no crypto amounts.</p>
+						</div>
+					{% endif %}
 				</div>
 			</li>
 		</ul>
