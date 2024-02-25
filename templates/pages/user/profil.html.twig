@@ -1,23 +1,24 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}BitChest - EditProfile
+{% block title %}BitChest - Profile
 {% endblock %}
 
 {% block body %}
 	<style>
 		.example-wrapper {
-			margin: 1em auto;
-			max-width: 800px;
-			width: 95%;
 			font: 18px / 1.5 sans-serif;
 		}
+
 		.example-wrapper code {
 			background: #F5F5F5;
 			padding: 2px 6px;
 		}
-	</style>
 
-	<div class="example-wrapper">
+		li {
+			list-style-type: none;
+		}
+	</style>
+	<div class=".example-wrapper">
 		<h1 class="mt-4">Profile  ✅
 			{% if is_granted('ROLE_ADMIN') %}
 				ADMIN ⭐
@@ -29,5 +30,19 @@
 		<h3>
 			Email :</h3>
 		<p>{{user.email}}</p>
+		<ul class="navbar-nav me-auto">
+			<h3 class="mt-4">
+				Edit Profile :</h3>
+			<li class="nav-item">
+				<a type="button" class="btn btn-info" href="{{ path('user.edit', {'id': app.user.id}) }}">EDIT</a>
+			</li>
+			<h3 class="mt-4">
+				Edit Password :</h3>
+			<li class="nav-item">
+				<a type="button" class="btn btn-info" href="{{ path('user.edit.password', {'id': app.user.id}) }}">EDIT Password</a>
+			</li>
+		</ul>
+
 	</div>
+
 {% endblock %}

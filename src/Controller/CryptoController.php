@@ -83,7 +83,7 @@ class CryptoController extends AbstractController
                 $manager->flush();
 
                 // Rediriger vers l'action d'achat avec les données sélectionnées
-                return $this->redirectToRoute('app_home');
+                return $this->redirectToRoute('user.transactions', ['id' => $transaction->getUser()->getId()]);
             } else {
                 $this->addFlash(
                     'buyerror',
@@ -95,7 +95,7 @@ class CryptoController extends AbstractController
                         $solde,
                     )
                 );
-                return $this->redirectToRoute('app_home');
+                return $this->redirectToRoute('user.transaction', ['id' => $transaction->getUser()->getId()]);
             }
         }
 
@@ -136,6 +136,10 @@ class CryptoController extends AbstractController
                 $newSolde = $solde + ($amount * $price);
                 $user->wallet?->setSolde($newSolde);
                 $userCryptoAmounts[$cryptoName] -= $amount; // Soustraire la quantité vendue du portefeuille
+                if ($userCryptoAmounts[$cryptoName] == 0.0) {
+                    // Si la quantité de la crypto devient 0.0, supprimez-la de $userCryptoAmounts
+                    unset($userCryptoAmounts[$cryptoName]);
+                }
                 $user->wallet?->setUserCryptoAmounts($userCryptoAmounts);
                 $this->addFlash(
                     'sellsuccess',
@@ -150,7 +154,7 @@ class CryptoController extends AbstractController
                 $manager->persist($transaction);
                 $manager->flush();
                 // Rediriger vers l'action d'achat avec les données sélectionnées
-                return $this->redirectToRoute('app_home');
+                return $this->redirectToRoute('user.transactions', ['id' => $transaction->getUser()->getId()]);
             } else {
                 $this->addFlash(
                     'sellerror',
@@ -160,11 +164,14 @@ class CryptoController extends AbstractController
                         $amount,
                     )
                 );
-                return $this->redirectToRoute('app_home');
+                return $this->redirectToRoute('user.transactions', ['id' => $transaction->getUser()->getId()]);
             }
         }
+        $user = $this->getUser();
+        $userCryptoAmounts = $user->wallet?->getUserCryptoAmounts();
         return $this->render('crypto/sell.html.twig', [
             'form' => $form->createView(),
+            'userCryptoAmounts' => $userCryptoAmounts,
         ]);
     }
 }

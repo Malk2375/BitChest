@@ -1,0 +1,82 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}BitChest - Transactions
+{% endblock %}
+
+{% block body %}
+	<style>
+		.example-wrapper {
+			max-width: 800px;
+			font: 18px / 1.5 sans-serif;
+		}
+		.example-wrapper code {
+			background: #F5F5F5;
+			padding: 2px 6px;
+		}
+	</style>
+
+	<div class="example-wrapper">
+		<div class="jumbotron mt-4">
+			<h1 class="mt-4">Transactions de
+				{{ user.fullName }}
+				✅</h1>
+			{% for message in app.flashes('buysuccess') %}
+				<div class="alert alert-dismissible alert-success">
+					<strong>{{message}}</strong>
+				</div>
+			{% endfor %}
+			{% for message in app.flashes('buyerror') %}
+				<div class="alert alert-dismissible alert-danger">
+					<strong>{{message}}</strong>
+				</div>
+			{% endfor %}
+			{% for message in app.flashes('sellsuccess') %}
+				<div class="alert alert-dismissible alert-success">
+					<strong>{{message}}</strong>
+				</div>
+			{% endfor %}
+			{% for message in app.flashes('sellerror') %}
+				<div class="alert alert-dismissible alert-danger">
+					<strong>{{message}}</strong>
+				</div>
+			{% endfor %}
+
+			{% if transactions is empty %}
+				<h2>Pas encore de transaction</h2>
+			{% else %}
+				<table class="table table-hover mt-4">
+					<thead>
+						<tr>
+							<th scope="col">Type</th>
+							<th scope="col">Amount</th>
+							<th scope="col">Crypto</th>
+							<th scope="col">Price</th>
+							<th scope="col">Date</th>
+							<th scope="col">Price of the transaction</th>
+						</tr>
+					</thead>
+					<tbody>
+						{% for transaction in transactions %}
+							<tr>
+								<td>{{ transaction.type }}</td>
+								<td>{{ transaction.amount }}</td>
+								<td>{{ transaction.cryptoName }}</td>
+								<td>{{ transaction.price }}</td>
+								<td>{{ transaction.transactionDate | date('Y-m-d H:i:s') }}</td>
+								<td>
+									{% if transaction.type == 'BUY' %}
+										<span style="color: red;">-
+											{{ transaction.transactionPrice }}</span>
+									{% else %}
+										<span style="color: green;">+
+											{{ transaction.transactionPrice }}</span>
+									{% endif %}
+								</td>
+							</tr>
+						{% endfor %}
+					</tbody>
+				{% endif %}
+			</table>
+		</div>
+	</div>
+{% endblock %}

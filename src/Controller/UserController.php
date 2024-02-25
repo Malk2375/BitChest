@@ -17,6 +17,8 @@ use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\ExpressionLanguage\Expression;
 use Knp\Component\Pager\PaginatorInterface;
+use App\Repository\TransactionRepository;
+use App\Repository\CryptoCurrencyRepository;
 
 
 class UserController extends AbstractController
@@ -151,6 +153,42 @@ class UserController extends AbstractController
         return $this->render('pages/user/profil.html.twig', [
             'user' => $user,
         ]);
+    }
+    #[Route('/user_transactions/{id}', name: 'user.transactions', methods: ['GET', 'POST'])]
+    #[IsGranted(new Expression('is_granted("ROLE_ADMIN")' or '(is_granted("ROLE_USER")'))]
+    public function transactions(
+        User $user,
+        TransactionRepository $transactionRepository,
+        CryptoCurrencyRepository $cryptoCurrencyRepository
+    ) {
+        if (!$this->getUser()) {
+            return $this->redirectToRoute('security.login');
+        }
+        if ($this->getUser() === $user || in_array('ROLE_ADMIN', $this->getUser()->getRoles(), true)) {
+            $transactions = $transactionRepository->findBy(['user' => $user]);
+            $transactionDetails = [];
+            foreach ($transactions as $transaction) {
+                // Récupérer l'objet CryptoCurrency associé à l'ID de la transaction
+                $cryptoCurrency = $cryptoCurrencyRepository->find($transaction->getCrypto());
+                // Recuperer le nom de la crypto-monnaie
+                $cryptoName = $cryptoCurrency ? $cryptoCurrency->getName() : null;
+                // Créer un tableau associatif contenant les détails de la transaction, y compris le nom de la crypto-monnaie
+                $transactionDetails[] = [
+                    'type' => $transaction->getType(),
+                    'amount' => $transaction->getAmount(),
+                    'price' => $transaction->getPrice(),
+                    'cryptoName' => $cryptoName,
+                    'transactionDate' => $transaction->getTransactionDate(),
+                    'transactionPrice' => $transaction->getAmount() * $transaction->getPrice(),
+                ];
+            }
+            return $this->render('pages/user/user_transactions.html.twig', [
+                'user' => $user,
+                'transactions' => $transactionDetails,
+            ]);
+        } else {
+            return $this->redirectToRoute('app_home');
+        }
     }
     /**
      * This function displays all the users profile's

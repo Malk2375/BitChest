@@ -7,9 +7,6 @@
 
 	<style>
 		.example-wrapper {
-			margin: 1em auto;
-			max-width: 800px;
-			width: 95%;
 			font: 18px / 1.5 sans-serif;
 		}
 		.example-wrapper code {
@@ -59,26 +56,6 @@
 			{% endfor %}
 			{% for message in app.flashes('updateProfilSuccess') %}
 				<div class="alert alert-dismissible alert-success">
-					<strong>{{message}}</strong>
-				</div>
-			{% endfor %}
-			{% for message in app.flashes('buysuccess') %}
-				<div class="alert alert-dismissible alert-success">
-					<strong>{{message}}</strong>
-				</div>
-			{% endfor %}
-			{% for message in app.flashes('buyerror') %}
-				<div class="alert alert-dismissible alert-danger">
-					<strong>{{message}}</strong>
-				</div>
-			{% endfor %}
-			{% for message in app.flashes('sellsuccess') %}
-				<div class="alert alert-dismissible alert-success">
-					<strong>{{message}}</strong>
-				</div>
-			{% endfor %}
-			{% for message in app.flashes('sellerror') %}
-				<div class="alert alert-dismissible alert-danger">
 					<strong>{{message}}</strong>
 				</div>
 			{% endfor %}
