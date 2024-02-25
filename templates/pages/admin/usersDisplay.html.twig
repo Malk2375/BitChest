@@ -88,7 +88,11 @@
 								{% endif %}
 							</td>
 							<td>
-								<a class="btn btn-info" href="{{ path('user.transactions', { 'id': user.id }) }}">Transactions</a>
+								{% if user.wallet is not null %}
+									<a class="btn btn-info" href="{{ path('user.transactions', { 'id': user.id }) }}">Transactions</a>
+								{% else %}
+									ADMIN ⭐
+								{% endif %}
 							</td>
 							<td>
 								<a class="btn btn-info" href="{{ path('user.edit', { 'id': user.id }) }}">Edit</a>
@@ -98,8 +102,8 @@
 								<a class="btn btn-info" href="{{ path('user.edit.password', { 'id': user.id }) }}">Edit</a>
 							</td>
 							<td>
-								{# Ajout de la colonne Action contenant le bouton "Modifier" #}
 								<a class="btn btn-warning" href="{{ path('user.delete', { 'id': user.id }) }}">Delete</a>
+								{# Ajout de la colonne Action contenant le bouton "Modifier" #}
 							</td>
 						</tr>
 					{% endfor %}
