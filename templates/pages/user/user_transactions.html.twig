@@ -17,7 +17,7 @@
 
 	<div class="example-wrapper">
 		<div class="jumbotron mt-4">
-			<h1 class="mt-4">Transactions de
+			<h1 class="mt-4">Transactions of
 				{{ user.fullName }}
 				✅</h1>
 			{% for message in app.flashes('buysuccess') %}
@@ -42,11 +42,11 @@
 			{% endfor %}
 
 			{% if transactions is empty %}
-				<h2>Pas encore de transaction</h2>
+				<h2>You have not done any transaction</h2>
 			{% else %}
 				<table class="table table-hover mt-4">
 					<thead>
-						<tr>
+						<tr class="table-success">
 							<th scope="col">Type</th>
 							<th scope="col">Amount</th>
 							<th scope="col">Crypto</th>

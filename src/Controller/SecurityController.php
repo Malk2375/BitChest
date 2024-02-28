@@ -17,7 +17,7 @@ use App\Entity\Wallet;
 class SecurityController extends AbstractController
 {
     /**
-     * This function allows you to login on your existing account
+     * Fonction permet de se connecter
      * @param AuthenticationUtils $authenticationUtils
      * @return Response
      */
@@ -40,7 +40,7 @@ class SecurityController extends AbstractController
         // Pas de logique specifique ici car symfony s'occupe de ça
     }
     /**
-     * This function allows the admin only to register a new user.
+     * Cette fonction permet que pour l'admin de créer un utilisateur
      *
      * @param Request $request
      * @param EntityManagerInterface $manager
@@ -50,7 +50,7 @@ class SecurityController extends AbstractController
     #[IsGranted('ROLE_ADMIN')]
     public function register(Request $request, EntityManagerInterface $manager): Response
     {
-        $randomPassword = bin2hex(random_bytes(5)); // Génère une chaîne hexadécimale de 20 caractères
+        $randomPassword = bin2hex(random_bytes(5)); // Génère une chaîne aleatoire pour l'utiliser comme un mot de passe
         $user = new User();
         $user->setRoles(['ROLE_USER']);
         $user->setPlainPassword($randomPassword);

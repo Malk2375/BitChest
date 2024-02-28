@@ -41,6 +41,13 @@
 			<li class="nav-item">
 				<a type="button" class="btn btn-info" href="{{ path('user.edit.password', {'id': app.user.id}) }}">EDIT Password</a>
 			</li>
+			{% if not is_granted('ROLE_ADMIN') %}
+				<h3 class="mt-4">
+					Delete Your account</h3>
+				<li class="nav-item">
+					<a type="button" class="btn btn-danger" href="{{ path('user.delete', {'id': app.user.id}) }}">Delete</a>
+				</li>
+			{% endif %}
 		</ul>
 
 	</div>

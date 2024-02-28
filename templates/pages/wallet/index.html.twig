@@ -1,0 +1,112 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}BitChest - Wallet
+{% endblock %}
+{% block body %}
+
+	<style>
+		.example-wrapper {
+			font: 18px / 1.5 sans-serif;
+		}
+		.example-wrapper code {
+			background: #F5F5F5;
+			padding: 2px 6px;
+		}
+		li {
+			list-style-type: none;
+			margin-right: 30px;
+		}
+		.flex-container {
+			display: flex;
+			flex-direction: row;
+			flex-wrap: wrap;
+			justify-content: normal;
+			align-items: normal;
+			align-content: normal;
+		}
+
+		.flex-items:nth-child(1) {
+			display: block;
+			flex-grow: 0;
+			flex-shrink: 1;
+			flex-basis: auto;
+			align-self: auto;
+			order: 0;
+		}
+
+		.flex-items:nth-child(2) {
+			display: block;
+			flex-grow: 0;
+			flex-shrink: 1;
+			flex-basis: auto;
+			align-self: auto;
+			order: 0;
+		}
+
+		.flex-items:nth-child(3) {
+			display: block;
+			flex-grow: 0;
+			flex-shrink: 1;
+			flex-basis: auto;
+			align-self: auto;
+			order: 0;
+		}
+
+		.flex-items:nth-child(4) {
+			display: block;
+			flex-grow: 0;
+			flex-shrink: 1;
+			flex-basis: auto;
+			align-self: auto;
+			order: 0;
+		}
+	</style>
+
+	<div class="example-wrapper">
+		<h1>Hello
+			{{ app.user.fullName }}! ✅</h1>
+		<h3>This is your wallet</h3>
+		<ul class="flex-container">
+
+			<li class="flex-items">
+
+				<div class="card border-success mb-3  mt-4" style="width: 18rem; height: 18rem;">
+					<div class="card-header">Solde info</div>
+					<div class="card-body">
+						<h3 class="card-title">Solde</h3>
+						<p class="card-text">Your solde is :
+							{{app.user.wallet.solde}}
+							€</p>
+					</div>
+				</div>
+			</li>
+			{% if userCryptoAmounts is not null %}
+				{% for cryptoName, amount in userCryptoAmounts %}
+					<li class="flex-items">
+						<div class="card border-success mb-3  mt-4" style="width: 18rem; height: 18rem;">
+							<div class="card-header">{{ cryptoName }}</div>
+							<div class="card-body">
+								<p>Amount:
+									{{ amount }}</p>
+								<p>Bought for :
+									{{amount * price }}
+									€</p>
+								<p>For the Price:
+									{{price}}
+									€</p>
+								<p>Could be sold now for
+									{{ amount * current_price}}
+									€</p>
+							</div>
+						</div>
+					</li>
+				{% endfor %}
+			{% else %}
+				<div class="card-body">
+					<h4 class="card-title">Crypto</h4>
+					<p class="card-text">User has no crypto amounts.</p>
+				</div>
+			{% endif %}
+		</ul>
+	</div>
+{% endblock %}

@@ -7,6 +7,7 @@
 
 	<style>
 		.example-wrapper {
+			max-width: 45rem;
 			font: 18px / 1.5 sans-serif;
 		}
 		.example-wrapper code {
@@ -18,7 +19,7 @@
 	<div class="example-wrapper">
 		<div class="jumbotron">
 			{% if not app.user %}
-				<h1 class="display-4">Hello, Bienvenue sur BitChest App ✅
+				<h1 class="display-4">Hello, Welcome in BitChest App ✅
 				</h1>
 				<hr class="my-4">
 			{% endif %}
@@ -68,21 +69,20 @@
 
 
 			{% if not app.user %}
-				<p>Rendez-vous sur la page de connexion pour utiliser l'application
-				</p>
-				<p class="lead">
-					<a class="btn btn-primary btn-lg" href="/login" role="button">Se connecter
-					</a>
-				</p>
-			{% endif %}
-			<p class="lead">
-				{% if is_granted('ROLE_ADMIN') %}
-					<p>Create a new User</p>
-					<a class="btn btn-primary btn-lg" href="{{ path('security.register') }}" role="button">Create</a>
-					<p class="mt-4">List of the Users of BitChest</p>
-					<a class="btn btn-primary btn-lg" href="{{ path('users.display') }}" role="button">Show</a>
-				{% endif %}
+				<p>Head over to the login page to access the application.</p>
 			</p>
-		</div>
+			<p class="lead">
+				<a class="btn btn-primary btn-lg" href="/login" role="button">Login
+				</a>
+			</p>
+		{% endif %}
+		<p class="lead">
+			{% if is_granted('ROLE_ADMIN') %}
+				<p>Create a new User</p>
+				<a class="btn btn-primary btn-lg" href="{{ path('security.register') }}" role="button">Create</a>
+				<p class="mt-4">List of the Users of BitChest</p>
+				<a class="btn btn-primary btn-lg" href="{{ path('users.display') }}" role="button">Show</a>
+			{% endif %}
+		</p>
 	</div>
-{% endblock %}
+</div>{% endblock %}

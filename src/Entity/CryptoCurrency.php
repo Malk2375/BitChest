@@ -27,6 +27,9 @@ class CryptoCurrency
     #[ORM\OneToMany(mappedBy: 'crypto', targetEntity: Transaction::class)]
     private Collection $transactions;
 
+    /**
+     * Constructeur Crypto. Initialise la collection de Transactions
+     */
     public function __construct()
     {
         $this->transactions = new ArrayCollection();
@@ -94,7 +97,6 @@ class CryptoCurrency
     public function removeTransaction(Transaction $transaction): static
     {
         if ($this->transactions->removeElement($transaction)) {
-            // set the owning side to null (unless already changed)
             if ($transaction->getCrypto() === $this) {
                 $transaction->setCrypto(null);
             }

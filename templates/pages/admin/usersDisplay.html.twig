@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Users
+{% block title %}BitChest - Users
 {% endblock %}
 
 {% block body %}
@@ -46,7 +46,7 @@
 				<h2>ADMIN
 					{{ app.user.fullName }}
 					✅</h2>
-				<p class="lead entete">Voici la liste de tous les utilisateurs de BitChest</p>
+				<p class="lead">List of all the Users of BitChest</p>
 			</div>
 			<div class="count">
 				<div>
@@ -76,13 +76,13 @@
 				<tbody>
 					{% for user in users %}
 						<tr>
-							{# <th scope="row">Default</th> #}
 							<td>{{ user.id }}</td>
 							<td>{{ user.fullName }}</td>
 							<td>{{ user.email }}</td>
 							<td>
 								{% if user.wallet is not null %}
 									{{ user.wallet.solde }}
+									€
 								{% else %}
 									ADMIN ⭐
 								{% endif %}
@@ -98,12 +98,14 @@
 								<a class="btn btn-info" href="{{ path('user.edit', { 'id': user.id }) }}">Edit</a>
 							</td>
 							<td>
-								{# Ajout de la colonne Action contenant le bouton "Modifier" #}
 								<a class="btn btn-info" href="{{ path('user.edit.password', { 'id': user.id }) }}">Edit</a>
 							</td>
 							<td>
-								<a class="btn btn-warning" href="{{ path('user.delete', { 'id': user.id }) }}">Delete</a>
-								{# Ajout de la colonne Action contenant le bouton "Modifier" #}
+								{% if user.wallet is not null %}
+									<a class="btn btn-danger" href="{{ path('user.delete', { 'id': user.id }) }}">Delete</a>
+								{% else %}
+									ADMIN ⭐
+								{% endif %}
 							</td>
 						</tr>
 					{% endfor %}

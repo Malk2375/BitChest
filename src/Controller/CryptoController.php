@@ -18,31 +18,45 @@ use App\Entity\Wallet;
 
 class CryptoController extends AbstractController
 {
+    // Constructeur initialisant l'entityManager pour recuperer les données
     private EntityManagerInterface $entityManager;
     public function __construct(EntityManagerInterface $entityManager)
     {
         $this->entityManager = $entityManager;
     }
+    /**
+     * Affiche la liste des cryptomonnaies
+     *
+     * @param CryptoCurrencyRepository $cryptoCurrencyRepository
+     * @return Response
+     */
     #[Route('/crypto', name: 'crypto_list')]
     #[IsGranted('ROLE_USER')]
     public function list(CryptoCurrencyRepository $cryptoCurrencyRepository): Response
     {
         $cryptos = $cryptoCurrencyRepository->findBy([], ['name' => 'ASC']);
 
-        return $this->render('crypto/list.html.twig', [
+        return $this->render('pages/crypto/list.html.twig', [
             'cryptos' => $cryptos,
         ]);
     }
 
+    /**
+     * Permet à l'utilisateur d'acheter une cryptomonnaie
+     *
+     * @param User $user
+     * @param Request $request
+     * @param EntityManagerInterface $manager
+     * @return Response
+     */
     #[Route('/crypto/buycrypto', name: 'crypto_buy')]
     #[IsGranted('ROLE_USER')]
     public function buyCrypto(
         User $user,
         Request $request,
-        Wallet $wallet,
         EntityManagerInterface $manager,
     ): Response {
-        $transaction = new Transaction(); // Crée une nouvelle instance de Transaction
+        $transaction = new Transaction(); // Créer une nouvelle instance de Transaction
         $user = $this->getUser();
         $solde = $user->wallet?->getSolde();
         $form = $this->createForm(BuyCryptoType::class);
@@ -61,6 +75,7 @@ class CryptoController extends AbstractController
             $price = $crypto->getCurrentPrice();
             $transaction->setPrice($price);
             $transaction->setCrypto($crypto);
+            // Assurer qu'il a le solde suffisant pour acheter
             if ($amount * $price <= $solde) {
                 $newSolde = $solde - ($amount * $price);
                 $user->wallet?->setSolde($newSolde);
@@ -99,16 +114,23 @@ class CryptoController extends AbstractController
             }
         }
 
-        return $this->render('crypto/buy.html.twig', [
+        return $this->render('pages/crypto/buy.html.twig', [
             'form' => $form->createView(),
         ]);
     }
+    /**
+     * Permet à l'utilisateur de vendre une cryptomonnaie
+     *
+     * @param User $user
+     * @param Request $request
+     * @param EntityManagerInterface $manager
+     * @return Response
+     */
     #[Route('/crypto/sellcrypto', name: 'crypto_sell')]
     #[IsGranted('ROLE_USER')]
     public function sellCrypto(
         User $user,
         Request $request,
-        Wallet $wallet,
         EntityManagerInterface $manager,
     ): Response {
         $transaction = new Transaction(); // Crée une nouvelle instance de Transaction
@@ -132,6 +154,7 @@ class CryptoController extends AbstractController
             $transaction->setCrypto($crypto);
             $userCryptoAmounts = $user->wallet?->getUserCryptoAmounts();
             $cryptoName = $crypto->getName();
+            // Assurer qu'il la quantité de crypto qu'il veut vendre
             if (isset($userCryptoAmounts[$cryptoName]) && $userCryptoAmounts[$cryptoName] >= $amount) {
                 $newSolde = $solde + ($amount * $price);
                 $user->wallet?->setSolde($newSolde);
@@ -169,7 +192,7 @@ class CryptoController extends AbstractController
         }
         $user = $this->getUser();
         $userCryptoAmounts = $user->wallet?->getUserCryptoAmounts();
-        return $this->render('crypto/sell.html.twig', [
+        return $this->render('pages/crypto/sell.html.twig', [
             'form' => $form->createView(),
             'userCryptoAmounts' => $userCryptoAmounts,
         ]);

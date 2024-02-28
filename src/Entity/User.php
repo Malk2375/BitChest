@@ -11,7 +11,6 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
-use Symfony\Component\Security\Core\User\EquatableInterface;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[UniqueEntity(fields: ['email'], message: 'There is already an account with this email')]
@@ -41,8 +40,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Assert\Length(
         min: 2,
         max: 180,
-        minMessage: 'Your email must be at least {{ limit }} characters long',
-        maxMessage: 'Your email cannot be longer than {{ limit }} characters',
+        minMessage: 'Email must be at least {{ limit }} characters long',
+        maxMessage: 'Email cannot be longer than {{ limit }} characters',
     )]
     private ?string $email = null;
 
@@ -72,10 +71,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function __construct()
     {
         $this->updatedAt = new \DateTimeImmutable;
-        // if (!in_array('ROLE_ADMIN', $this->roles)) {
-        //     $this->wallet = new Wallet();
-        //     $this->wallet->setUser($this); // Assurez-vous de lier l'utilisateur au portefeuille
-        // }
         $this->transactions = new ArrayCollection();
     }
 
@@ -112,7 +107,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function getRoles(): array
     {
         $roles = $this->roles;
-        // guarantee every user at least has ROLE_USER
+        // Garanti que chaque utilisateur a au moins un role 
         $roles[] = 'ROLE_USER';
 
         return array_unique($roles);
@@ -145,8 +140,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     public function eraseCredentials(): void
     {
-        // If you store any temporary, sensitive data on the user, clear it here
-        // $this->plainPassword = null;
     }
 
 
@@ -219,7 +212,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function removeTransaction(Transaction $transaction): static
     {
         if ($this->transactions->removeElement($transaction)) {
-            // set the owning side to null (unless already changed)
             if ($transaction->getUser() === $this) {
                 $transaction->setUser(null);
             }

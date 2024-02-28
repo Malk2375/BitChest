@@ -6,7 +6,7 @@
 {% block body %}
 	<style>
 		.example-wrapper {
-			max-width: 47rem;
+			max-width: 40rem;
 			font: 18px / 1.5 sans-serif;
 		}
 		.example-wrapper code {
@@ -16,11 +16,9 @@
 	</style>
 
 	<div class="example-wrapper">
-		<h1 class="mt-4">Profile Edition Form -
+		<h1 class="mt-4">Profile Edition -
 			{{user.fullName}}
 			✅</h1>
-
-		{# form c'est 'form' dans 'form' => $form->createView() et form la deuxieme c'est $form une instance de createForm()  #}
 		{% for message in app.flashes('warning') %}
 			<div class="alert alert-warning mt-4">
 				{{ message }}

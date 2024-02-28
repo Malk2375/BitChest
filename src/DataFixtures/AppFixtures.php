@@ -9,7 +9,6 @@ use App\Entity\CryptoCurrency;
 use Faker\Generator;
 use Doctrine\Persistence\ObjectManager;
 use Doctrine\Bundle\FixturesBundle\Fixture;
-use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class AppFixtures extends Fixture
 {
@@ -25,7 +24,7 @@ class AppFixtures extends Fixture
 
     public function load(ObjectManager $manager): void
     {
-        // Users
+        // Création de 5 utilisateurs
         for ($i = 0; $i < 5; $i++) {
             $user = new User();
             $user->setFullName($this->faker->name())
@@ -40,6 +39,7 @@ class AppFixtures extends Fixture
             $manager->persist($user);
             $manager->persist($wallet);
         }
+        // Création d'un admin
         $admin = new User();
         $admin->setFullName($this->faker->name())
             ->setRoles(['ROLE_ADMIN'])
@@ -47,6 +47,7 @@ class AppFixtures extends Fixture
             ->setPlainPassword('adminpassword');
         $manager->persist($admin);
 
+        // Création des cryptomonnaies
         $cryptoNames = ['Bitcoin', 'Ethereum', 'Ripple', 'Bitcoin Cash', 'Cardano', 'Litecoin', 'NEM', 'Stellar', 'IOTA', 'Dash'];
 
         foreach ($cryptoNames as $cryptoName) {
@@ -55,6 +56,7 @@ class AppFixtures extends Fixture
             $firstCotation = $this->getFirstCotation($cryptoName);
             $dailyPrices = [];
             $currentDate = new \DateTime();
+            // On va faire des fixtures pour les 30 derniers jours
             for ($i = 0; $i < 31; $i++) {
                 $date = $currentDate->format('Y-m-d');
                 $cotationFor = $this->getCotationFor($cryptoName);
@@ -68,11 +70,11 @@ class AppFixtures extends Fixture
             $cryptoCurrency->setDailyPrices($dailyPrices);
             $manager->persist($cryptoCurrency);
         }
-
+        // Sauvegarde des données
         $manager->flush();
     }
 
-
+    // Fonctions predefinie
     private function getFirstCotation($cryptoname)
     {
         return ord(substr($cryptoname, 0, 1)) + rand(0, 10);

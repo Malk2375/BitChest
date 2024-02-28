@@ -24,8 +24,8 @@ use App\Repository\CryptoCurrencyRepository;
 class UserController extends AbstractController
 {
     /**
-     * This controller allow us to edit user's profile
-     * Both ROLE_USER and ROLE_ADMIN can edit user's profile because ROLE_ADMIN is a ROLE_USER
+     * Ce contrôleur permet de modifier le profil de l'utilisateur.
+     * Les utilisateurs avec le rôle ROLE_USER ou ROLE_ADMIN peuvent modifier leur profil. L'admin peut modifier n'importe quel profil, il a acccés
      *
      * @param User $user
      * @param Request $request
@@ -40,14 +40,11 @@ class UserController extends AbstractController
         EntityManagerInterface $manager,
         UserPasswordHasherInterface $hasher
     ): Response {
-        /**
-         * Pour confirmer que c'est bien cet utilisateur qui voudrait modifier son profil.
-         * Si l'utitilisateur n'est pas celui qui voudrait modifier son profil un message d'erreur sera affiché; erreur 403 : on peut la personnaliser depuis https://symfony.com/doc/current/controller/error_pages.html#controller-error-pages-by-status-code
-         */
-
+        // Vérifier si l'utilisateur est connecté
         if (!$this->getUser()) {
             return $this->redirectToRoute('security.login');
         }
+        // Vérifier si l'utilisateur actuel est autorisé à modifier le profil
         if ($this->getUser() === $user) {
             // L'utilisateur actuel est l'utilisateur spécifié
         } elseif (in_array('ROLE_ADMIN', $this->getUser()->getRoles(), true)) {
@@ -56,7 +53,7 @@ class UserController extends AbstractController
             // Redirection pour tous les autres cas
             return $this->redirectToRoute('app_home');
         }
-
+        // Créer le formulaire de modification du profil
         $form = $this->createForm(UserType::class, $user);
 
         $form->handleRequest($request);
@@ -84,6 +81,16 @@ class UserController extends AbstractController
             'form' => $form->createView(),
         ]);
     }
+    /**
+     * Permet à un utilisateur de modifier son mot de passe.
+     * Les utilisateurs avec le rôle ROLE_USER ou ROLE_ADMIN peuvent modifier leur mot de passe. Pareil l'admin peut modifier n'importe quel profil
+     *
+     * @param User $user
+     * @param Request $request
+     * @param EntityManagerInterface $manager
+     * @param UserPasswordHasherInterface $hasher
+     * @return Response
+     */
     #[Route('/edit_password/{id}', name: 'user.edit.password', methods: ['GET', 'POST'])]
     #[IsGranted(new Expression('is_granted("ROLE_ADMIN")' or '(is_granted("ROLE_USER")'))]
     public function editPassword(
@@ -92,9 +99,11 @@ class UserController extends AbstractController
         EntityManagerInterface $manager,
         UserPasswordHasherInterface $hasher
     ): Response {
+        // Vérifier si l'utilisateur est connecté
         if (!$this->getUser()) {
             return $this->redirectToRoute('security.login');
         }
+        // Vérifier si l'utilisateur actuel est autorisé à modifier le mot de passe
         if ($this->getUser() === $user) {
             // L'utilisateur actuel est l'utilisateur spécifié
         } elseif (in_array('ROLE_ADMIN', $this->getUser()->getRoles(), true)) {
@@ -104,6 +113,7 @@ class UserController extends AbstractController
             return $this->redirectToRoute('app_home');
         }
 
+        // Créer le formulaire de modification du mot de passe
         $form = $this->createForm(UserPasswordType::class);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
@@ -134,14 +144,23 @@ class UserController extends AbstractController
             'form' => $form->createView()
         ]);
     }
+    /**
+     * Affiche le profil d'un utilisateur.
+     * Les utilisateurs avec le rôle ROLE_USER ou ROLE_ADMIN peuvent afficher leur propre profil. L'admin peut voir tout
+     *
+     * @param User $user
+     * @return Response
+     */
     #[Route('/profil/{id}', name: 'user.profil', methods: ['GET', 'POST'])]
     #[IsGranted(new Expression('is_granted("ROLE_ADMIN")' or '(is_granted("ROLE_USER")'))]
     public function profil(
         User $user,
     ) {
+        // Vérifier si l'utilisateur est connecté
         if (!$this->getUser()) {
             return $this->redirectToRoute('security.login');
         }
+        // Vérifier si l'utilisateur actuel est autorisé à afficher le profil
         if ($this->getUser() === $user) {
             // L'utilisateur actuel est l'utilisateur spécifié
         } elseif (in_array('ROLE_ADMIN', $this->getUser()->getRoles(), true)) {
@@ -154,6 +173,14 @@ class UserController extends AbstractController
             'user' => $user,
         ]);
     }
+    /**
+     * Affiche toutes les transactions d'un utilisateur.
+     * Les utilisateurs avec le rôle ROLE_USER ou ROLE_ADMIN peuvent afficher les transactions de leur propre profil ou celui des autres utilisateurs. L'admin peut voir les transactions de tous les utilisateurs
+     * @param User $user
+     * @param TransactionRepository $transactionRepository
+     * @param CryptoCurrencyRepository $cryptoCurrencyRepository
+     * @return Response
+     */
     #[Route('/user_transactions/{id}', name: 'user.transactions', methods: ['GET', 'POST'])]
     #[IsGranted(new Expression('is_granted("ROLE_ADMIN")' or '(is_granted("ROLE_USER")'))]
     public function transactions(
@@ -161,9 +188,11 @@ class UserController extends AbstractController
         TransactionRepository $transactionRepository,
         CryptoCurrencyRepository $cryptoCurrencyRepository
     ) {
+        // Vérifier si l'utilisateur est connecté
         if (!$this->getUser()) {
             return $this->redirectToRoute('security.login');
         }
+        // Vérifier si l'utilisateur actuel est autorisé à afficher les transactions
         if ($this->getUser() === $user || in_array('ROLE_ADMIN', $this->getUser()->getRoles(), true)) {
             $transactions = $transactionRepository->findBy(['user' => $user]);
             $transactionDetails = [];
@@ -191,7 +220,7 @@ class UserController extends AbstractController
         }
     }
     /**
-     * This function displays all the users profile's
+     * Affiche la liste des utilisateurs pour l'admin. Les utilisateurs normaux n'auront pas cette liste
      *
      * @param UserRepository $repository
      * @param PaginatorInterface $paginator
@@ -215,10 +244,16 @@ class UserController extends AbstractController
             'users' => $users,
         ]);
     }
+    /**
+     * Supprime un utilisateur.
+     *
+     * @param User $user
+     * @param EntityManagerInterface $manager
+     * @return Response
+     */
     #[Route('/delete_user/{id}', name: 'user.delete', methods: ['GET', 'POST'])]
     public function delete_user(
         User $user,
-        Request $request,
         EntityManagerInterface $manager
     ) {
         if (!$this->getUser()) {

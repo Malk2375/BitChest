@@ -14,7 +14,7 @@ class Wallet
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(nullable: true)] // Rendre la colonne solde nullable
+    #[ORM\Column(nullable: true)] // La colonne solde est nullable car l'admin ne l'ai pas
     private ?float $solde = null;
 
     #[ORM\OneToOne(cascade: ['persist', 'remove'], targetEntity: User::class, inversedBy: "wallet")]

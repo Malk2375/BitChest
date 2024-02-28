@@ -9,8 +9,6 @@ use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 
@@ -21,7 +19,7 @@ class BuyCryptoType extends AbstractType
         $builder
             ->add('crypto', EntityType::class, [
                 'class' => CryptoCurrency::class,
-                'choice_label' => 'name', // ou tout autre champ à afficher comme libellé
+                'choice_label' => 'name',
                 'multiple' => false,
                 'attr' => ['class' => 'form-select'],
             ])
