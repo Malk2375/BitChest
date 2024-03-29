@@ -1,5 +1,5 @@
 # BitChest
-- [Bitchest](https://dorbani.alwaysdata.net){:target="_blank"}
+- [Bitchest](https://dorbani.alwaysdata.net)
 # Système de Gestion de Portefeuille de Cryptomonnaies
 
 BitChest est une application web conçue pour gérer les portefeuilles de cryptomonnaies. Ce README fournit un aperçu des spécifications et des fonctionnalités du projet.
