@@ -64,4 +64,4 @@ Pendant la phase de prototypage, les cotations des cryptomonnaies pour les 30 de
 ## Contributeurs
 
 - [Mohamed Abdelmalek DORBANI](https://github.com/Malk2375)
-- [Adil GHAZAL]
+- [Adil GHAZAL](https://github.com/AdilGhazal)
